@@ -359,7 +359,7 @@ class ImageDecoderResnet(nj.Module):
     self._kw = kw
 
   def __call__(self, x):
-    stages = int(np.log2(self._shape[-2]) - np.log2(self._minres))
+    stages = int(np.ceil(np.log2(self._shape[-2]) - np.log2(self._minres)))
     depth = self._depth * 2 ** (stages - 1)
     x = jaxutils.cast_to_compute(x)
     x = self.get('in', Linear, (self._minres, self._minres, depth))(x)

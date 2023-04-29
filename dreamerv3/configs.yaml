@@ -54,6 +54,8 @@ defaults:
     minecraft: {size: [64, 64], break_speed: 100.0}
     dmc: {size: [64, 64], repeat: 2, camera: -1}
     loconav: {size: [64, 64], repeat: 2, camera: -1}
+    # no size for minigrid because we use low-dim one-hot representation
+    minigrid: {fully_observable: true, hide_mission: true}
 
   # Agent
   task_behavior: Greedy
@@ -207,6 +209,33 @@ loconav:
     log_keys_max: '^log_.*'
   encoder: {mlp_keys: '.*', cnn_keys: 'image'}
   decoder: {mlp_keys: '.*', cnn_keys: 'image'}
+
+minigrid:
+  task: minigrid_SimpleCrossingS9N1
+  # same settings as dmlab
+  # (probably overkill; maybe copy Atari100k settings)
+  envs.amount: 8
+  encoder: {mlp_keys: 'direction', cnn_keys: 'image'}
+  decoder: {mlp_keys: 'direction', cnn_keys: 'image'}
+  run.train_ratio: 64
+
+procgen:
+  task: procgen_miner
+  # same settings as dmlab, as with minigrid
+  # (again, may be overkill)
+  envs.amount: 8
+  encoder: {mlp_keys: '^$', cnn_keys: 'image'}
+  decoder: {mlp_keys: '^$', cnn_keys: 'image'}
+  run.train_ratio: 64
+
+sokoban:
+  task: sokoban_small-v0
+  # same settings as dmlab, as with minigrid
+  # (again, may be overkill)
+  envs.amount: 8
+  encoder: {mlp_keys: '^$', cnn_keys: 'image'}
+  decoder: {mlp_keys: '^$', cnn_keys: 'image'}
+  run.train_ratio: 64
 
 small:
   rssm.deter: 512
