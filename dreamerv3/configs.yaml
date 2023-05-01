@@ -54,8 +54,14 @@ defaults:
     minecraft: {size: [64, 64], break_speed: 100.0}
     dmc: {size: [64, 64], repeat: 2, camera: -1}
     loconav: {size: [64, 64], repeat: 2, camera: -1}
-    # no size for minigrid because we use low-dim one-hot representation
-    minigrid: {fully_observable: true, hide_mission: true}
+    # FIXME(sam): 64x64 is too small for the biggest minigrid envs, like 4 rooms
+    minigrid: {size: [64, 64], fully_observable: true, hide_mission: true}
+    # unsure whether 64x64 is sufficient for the biggest procgen envs
+    procgen: {size: [64, 64]}
+    # use_tiny_world gives us 1 pixel = 1 cell & an informative RGB
+    # representation; we then resize to 64x64 in the hope that will make dreamer
+    # hyperparams transfer better
+    sokoban: {size: [64, 64], use_tiny_world: true}
 
   # Agent
   task_behavior: Greedy
@@ -212,27 +218,38 @@ loconav:
 
 minigrid:
   task: minigrid_SimpleCrossingS9N1
-  # same settings as dmlab
+  # same settings as atari
   # (probably overkill; maybe copy Atari100k settings)
   envs.amount: 8
+  run:
+    steps: 5.5e7
+    eval_eps: 10
+    train_ratio: 64
   encoder: {mlp_keys: 'direction', cnn_keys: 'image'}
   decoder: {mlp_keys: 'direction', cnn_keys: 'image'}
-  run.train_ratio: 64
 
 procgen:
   task: procgen_miner
-  # same settings as dmlab, as with minigrid
+  # same settings as atari, as with minigrid
   # (again, may be overkill)
   envs.amount: 8
+  run:
+    steps: 5.5e7
+    eval_eps: 10
+    train_ratio: 64
   encoder: {mlp_keys: '^$', cnn_keys: 'image'}
   decoder: {mlp_keys: '^$', cnn_keys: 'image'}
   run.train_ratio: 64
 
 sokoban:
   task: sokoban_small-v0
-  # same settings as dmlab, as with minigrid
+  # same settings as atari, as with minigrid
   # (again, may be overkill)
   envs.amount: 8
+  run:
+    steps: 5.5e7
+    eval_eps: 10
+    train_ratio: 64
   encoder: {mlp_keys: '^$', cnn_keys: 'image'}
   decoder: {mlp_keys: '^$', cnn_keys: 'image'}
   run.train_ratio: 64

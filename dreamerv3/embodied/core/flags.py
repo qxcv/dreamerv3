@@ -9,22 +9,23 @@ class Flags:
   def __init__(self, *args, **kwargs):
     self._config = config.Config(*args, **kwargs)
 
-  def parse(self, argv=None, help_exists=True):
-    parsed, remaining = self.parse_known(argv)
+  def parse(self, argv=None, help_exits=True):
+    parsed, remaining = self.parse_known(argv, help_exits=help_exits)
     for flag in remaining:
       if flag.startswith('--'):
         raise ValueError(f"Flag '{flag}' did not match any config keys.")
     assert not remaining, remaining
     return parsed
 
-  def parse_known(self, argv=None, help_exists=False):
+  def parse_known(self, argv=None, help_exits=False):
     if argv is None:
       argv = sys.argv[1:]
     if '--help' in argv:
       print('\nHelp:')
       lines = str(self._config).split('\n')[2:]
       print('\n'.join('--' + re.sub(r'[:,\[\]]', '', x) for x in lines))
-      help_exists and sys.exit()
+      if help_exits:
+        sys.exit()
     parsed = {}
     remaining = []
     key = None

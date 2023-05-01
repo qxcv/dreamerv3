@@ -390,8 +390,10 @@ class ImageDecoderResnet(nj.Module):
     if max(x.shape[1:-1]) > max(self._shape[:-1]):
       padh = (x.shape[1] - self._shape[0]) / 2
       padw = (x.shape[2] - self._shape[1]) / 2
-      x = x[:, int(np.ceil(padh)): -int(padh), :]
-      x = x[:, :, int(np.ceil(padw)): -int(padw)]
+      end_padh = x.shape[1]-int(padh)
+      end_padw = x.shape[2]-int(padw)
+      x = x[:, int(np.ceil(padh)):end_padh, :]
+      x = x[:, :, int(np.ceil(padw)):end_padw]
     # print(x.shape)
     assert x.shape[-3:] == self._shape, (x.shape, self._shape)
     if self._sigmoid:

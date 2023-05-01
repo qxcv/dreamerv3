@@ -1,6 +1,7 @@
 from typing import cast
 import gymnasium
-from minigrid.wrappers import FullyObsWrapper, ObservationWrapper
+from minigrid.wrappers import RGBImgObsWrapper, ObservationWrapper
+from dreamerv3.embodied.core.wrappers import ResizeImage
 from dreamerv3.embodied.envs.from_gymnasium import FromGymnasium
 
 
@@ -16,11 +17,17 @@ class HideMission(ObservationWrapper):
         return observation
 
 
-class Minigrid(FromGymnasium):
+class WrappedMinigrid(FromGymnasium):
     def __init__(self, task: str, fully_observable: bool, hide_mission: bool):
         env = gymnasium.make(f"MiniGrid-{task}-v0", render_mode="rgb_array")
         if fully_observable:
-            env = FullyObsWrapper(env)
+            env = RGBImgObsWrapper(env)
         if hide_mission:
             env = HideMission(env)
         super().__init__(env=env)
+
+
+# also wrap in ResizeImage so that we can handle size kwarg
+class Minigrid(ResizeImage):
+    def __init__(self, *args, size, **kwargs):
+        super().__init__(WrappedMinigrid(*args, **kwargs), size=size)

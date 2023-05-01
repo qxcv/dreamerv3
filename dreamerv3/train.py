@@ -162,15 +162,17 @@ def make_env(config, **overrides):
       'dummy': 'embodied.envs.dummy:Dummy',
       'gym': 'embodied.envs.from_gym:FromGym',
       'gymnasium': 'embodied.envs.from_gymnasium:FromGymnasium',
-      'minigrid': 'embodied.envs.minigrid:Minigrid',
       'dm': 'embodied.envs.from_dmenv:FromDM',
       'crafter': 'embodied.envs.crafter:Crafter',
       'dmc': 'embodied.envs.dmc:DMC',
       'atari': 'embodied.envs.atari:Atari',
       'dmlab': 'embodied.envs.dmlab:DMLab',
       'minecraft': 'embodied.envs.minecraft:Minecraft',
+      'minigrid': 'embodied.envs.minigrid:Minigrid',
       'loconav': 'embodied.envs.loconav:LocoNav',
       'pinpad': 'embodied.envs.pinpad:PinPad',
+      'procgen': 'embodied.envs.procgen:Procgen',
+      'sokoban': 'embodied.envs.sokoban:Sokoban',
   }[suite]
   if isinstance(ctor, str):
     module, cls = ctor.split(':')
@@ -179,7 +181,8 @@ def make_env(config, **overrides):
   kwargs = config.env.get(suite, {})
   kwargs.update(overrides)
   env = ctor(task, **kwargs)
-  return wrap_env(env, config)
+  wrapped = wrap_env(env, config)
+  return wrapped
 
 
 def wrap_env(env, config):
